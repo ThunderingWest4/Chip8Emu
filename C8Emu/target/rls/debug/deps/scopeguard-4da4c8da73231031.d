@@ -1,0 +1,5 @@
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\scopeguard-4da4c8da73231031.rmeta: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\scopeguard-1.1.0\src\lib.rs
+
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\scopeguard-4da4c8da73231031.d: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\scopeguard-1.1.0\src\lib.rs
+
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\scopeguard-1.1.0\src\lib.rs:

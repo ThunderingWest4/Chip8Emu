@@ -1,0 +1,12 @@
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\cc-f538223930c8a125.rmeta: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\registry.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\winapi.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\com.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\setup_config.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\windows_registry.rs
+
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\libcc-f538223930c8a125.rlib: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\registry.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\winapi.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\com.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\setup_config.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\windows_registry.rs
+
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\cc-f538223930c8a125.d: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\registry.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\winapi.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\com.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\setup_config.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\windows_registry.rs
+
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\lib.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\registry.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\winapi.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\com.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\setup_config.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\cc-1.0.52\src\windows_registry.rs:
