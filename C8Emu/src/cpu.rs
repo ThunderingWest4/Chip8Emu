@@ -7,7 +7,8 @@ pub struct CPU {
     pub stackpoint: u16,
     pub draw_plot: [[Color; 64]; 32],
     pub rows: u16, 
-    pub cols: u16
+    pub cols: u16, 
+    pub registers: [u16; 256]
 
 }
 
@@ -55,14 +56,14 @@ impl CPU {
                 self.command(x & 0x0FFF)
             }, 
             0x3000 => {
-                if(vx == nn) {
+                if(self.registers[vx as usize] == nn) {
                     //skip following instruction
                     self.stackpoint += 1;
 
                 }
             }, 
             0x4000 => {
-                if(vx != nn) {
+                if(self.registers[vx as usize] != nn) {
                     //skip following sintruction. isn't this redundant to 0x3XNN? 
                     //Might be that if the thing is 0x3 or 0x4 it just skips
                     self.stackpoint += 1;
@@ -71,28 +72,28 @@ impl CPU {
             }, 
             0x5000 => {
                 //0x5XY0
-                if(vx == vy) {
+                if(self.registers[vx as usize] == self.registers[vy as usize]) {
                     self.stackpoint+=1;
                 }
             }, 
             0x6000 => {
-                self.mem[vx as usize] = nn as u8;
+                self.registers[vx as usize] = nn;
             }, 
             0x7000 => {
-                self.mem[vx as usize] = self.mem[vx as usize] + (nn as u8);
+                self.registers[vx as usize] += nn;
             }, 
             0x8000 => {
                 let endDig: u16 = x&0x000F;
                 if(endDig == 0) {
-                    self.mem[vx as usize] = vy as u8;
+                    self.registers[vx as usize] = self.registers[vy as usize];
                 } else if (endDig == 1) {
-                    self.mem[vx as usize] = (vx | vy) as u8;
+                    self.registers[vx as usize] = self.registers[vx as usize] | self.registers[vy as usize];
                 } else if (endDig == 2) {
-                    self.mem[vx as usize] = (vx & vy) as u8;
+                    self.registers[vx as usize] = self.registers[vx as usize] & self.registers[vy as usize];
                 } else if (endDig == 3) {
-                    self.mem[vx as usize] = (vx ^ vy) as u8;
+                    self.registers[vx as usize] = self.registers[vx as usize] ^ self.registers[vy as usize];
                 } else if (endDig == 4) {
-                    self.mem[vy as usize] = vx as u8;
+                    let vxvy: u16 = self.registers[vx as usize] + self.registers[vy as usize];
                     //how to do carry?
                 }
             }, 

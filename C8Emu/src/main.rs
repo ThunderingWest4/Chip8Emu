@@ -27,7 +27,7 @@ fn main() {
         b: 0
 
     };
-    let mut Cpu = cpu::CPU {mem: stack, count: 0, stackpoint: 0, draw_plot: [[blk; 64]; 32], rows: row, cols: col};
+    let mut Cpu = cpu::CPU {mem: stack, count: 0, stackpoint: 0, draw_plot: [[blk; 64]; 32], rows: row, cols: col, registers: [0; 256]};
     println!("About to render canvas");
 
     canv.render(move |thing, image| {
