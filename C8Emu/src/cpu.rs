@@ -3,12 +3,13 @@ use pixel_canvas::Color;
 pub struct CPU {
 
     pub mem: [u8; 3584], 
-    pub count: u16, 
+    pub pc: u16, 
     pub stackpoint: u16,
     pub draw_plot: [[Color; 64]; 32],
     pub rows: u16, 
     pub cols: u16, 
-    pub registers: [u16; 256]
+    pub registers: [u16; 16], 
+    pub i: u16
 
 }
 
@@ -17,10 +18,14 @@ impl CPU {
 
     fn CPU() {}
     pub fn command(&mut self, x: u16) {
-
+        
+        // the >> is a rightshift
+        //so below, we are shifting vx and vy so that they represent a single hex nibble
+        //instead of several bytes
         let vx: u16 = (x&0x0F00) >> 8;
         let vy: u16 = (x&0x00F0) >> 4;
         let nn: u16 = x&0x00FF;
+        println!("{}", x);
 
         match x & 0xF000 {
 
@@ -93,19 +98,59 @@ impl CPU {
                 } else if (endDig == 3) {
                     self.registers[vx as usize] = self.registers[vx as usize] ^ self.registers[vy as usize];
                 } else if (endDig == 4) {
-                    let vxvy: u16 = self.registers[vx as usize] + self.registers[vy as usize];
-                    //how to do carry?
+                    
+                    let (ans, over) = self.registers[vx as usize].overflowing_add(self.registers[vy as usize]);
+                    self.registers[vx as usize] = ans;
+                    self.registers[0xF as usize] = if over {1} else {0};
+
+                }
+                else if (endDig == 5) {
+
+                    let (ans, borrow) = self.registers[vx as usize].overflowing_sub(self.registers[vy as usize]);
+                    self.registers[0xF as usize] = if borrow {0} else {1};
+
+                } else if (endDig == 6) {
+
+                    let leastSig = self.registers[vy as usize] & 0x000F;
+                    self.registers[vx as usize] == self.registers[vy as usize]>>1;
+                    self.registers[0xF as usize] = leastSig;
+
+                } else if (endDig == 7) {
+
+                    let (ans, borrow) = self.registers[vy as usize].overflowing_sub(self.registers[vx as usize]);
+                    self.registers[0xF as usize] = if borrow {0} else {1};
+                    self.registers[vx as usize] = ans;
+
+                } else if (endDig == 0xE) {
+
+                    let mostSig = (self.registers[vy as usize]&0xF000) >> 12;
+                    self.registers[vx as usize] = self.registers[vy as usize] << 1;
+                    self.registers[0xF as usize] = mostSig;
+
+                } else {
+
+                    panic!();
+
                 }
             }, 
             0x9000 => {
+                self.stackpoint += if(self.registers[vx as usize] != self.registers[vy as usize]) {1} else {0};
             }, 
-            0xA000 => {}, 
-            0xB000 => {}, 
+            0xA000 => {
+                self.i = x&0x0FFF;
+            }, 
+            0xB000 => {
+                //jump to x&0x0FFF + self.registers[0]
+                //but store in which variable?
+
+            }, 
             0xC000 => {}, 
             0xD000 => {}, 
             0xE000 => {}, 
             0xF000 => {}, 
-            _ => {}
+            _ => { 
+                panic!(); 
+            }
 
         };
         //out of match statement and in general command() method
