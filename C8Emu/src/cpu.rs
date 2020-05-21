@@ -1,4 +1,5 @@
 use pixel_canvas::Color;
+use rand::Rng;
 
 pub struct CPU {
 
@@ -8,8 +9,9 @@ pub struct CPU {
     pub draw_plot: [[Color; 64]; 32],
     pub rows: u16, 
     pub cols: u16, 
-    pub registers: [u16; 16], 
-    pub i: u16
+    pub registers: [u8; 16], 
+    pub i: u16, 
+    pub delay_timer: u8
 
 }
 
@@ -54,38 +56,38 @@ impl CPU {
             0x1000 => {
                 //jump to address x & 0x0FFF
                 let newp: u16 = x & 0x0FFF;
-                self.stackpoint = newp;
+                self.pc = newp;
             }, 
             0x2000 => {
                 //execute subroutine at x & 0x0FFF
                 self.command(x & 0x0FFF)
             }, 
             0x3000 => {
-                if(self.registers[vx as usize] == nn) {
+                if(self.registers[vx as usize] == nn as u8) {
                     //skip following instruction
-                    self.stackpoint += 1;
+                    self.pc += 2;
 
                 }
             }, 
             0x4000 => {
-                if(self.registers[vx as usize] != nn) {
+                if(self.registers[vx as usize] != nn as u8) {
                     //skip following sintruction. isn't this redundant to 0x3XNN? 
                     //Might be that if the thing is 0x3 or 0x4 it just skips
-                    self.stackpoint += 1;
+                    self.pc += 2;
 
                 }
             }, 
             0x5000 => {
                 //0x5XY0
                 if(self.registers[vx as usize] == self.registers[vy as usize]) {
-                    self.stackpoint+=1;
+                    self.pc+=2;
                 }
             }, 
             0x6000 => {
-                self.registers[vx as usize] = nn;
+                self.registers[vx as usize] = nn as u8;
             }, 
             0x7000 => {
-                self.registers[vx as usize] += nn;
+                self.registers[vx as usize] += nn as u8;
             }, 
             0x8000 => {
                 let endDig: u16 = x&0x000F;
@@ -123,38 +125,96 @@ impl CPU {
 
                 } else if (endDig == 0xE) {
 
-                    let mostSig = (self.registers[vy as usize]&0xF000) >> 12;
+                    let mostSig = (self.registers[vy as usize] as u16 & 0xF000) >> 12;
                     self.registers[vx as usize] = self.registers[vy as usize] << 1;
-                    self.registers[0xF as usize] = mostSig;
+                    self.registers[0xF as usize] = mostSig as u8;
 
                 } else {
 
-                    panic!();
+                    panic!("OPcode not found: {}", x);
 
                 }
             }, 
             0x9000 => {
-                self.stackpoint += if(self.registers[vx as usize] != self.registers[vy as usize]) {1} else {0};
+                self.pc += if(self.registers[vx as usize] != self.registers[vy as usize]) {2} else {0};
             }, 
             0xA000 => {
                 self.i = x&0x0FFF;
             }, 
             0xB000 => {
-                //jump to x&0x0FFF + self.registers[0]
-                //but store in which variable?
-
+                self.pc = x&0x0FFF + self.registers[0] as u16;
             }, 
-            0xC000 => {}, 
-            0xD000 => {}, 
-            0xE000 => {}, 
-            0xF000 => {}, 
+            0xC000 => {
+                //store random number at register Vx with mask of NN
+                //CXNN is format of hex num
+                self.registers[vx as usize] = rand::thread_rng().gen::<u8>() & nn as u8;
+            }, 
+            0xD000 => {
+                //draw sprite @ Vx, Vy with N bytes of sprite data starting at addr in self.i
+                //VF = 01 if any set pixels were changed to unset and 00 if not
+                
+            }, 
+            0xE000 => {
+                if(x&0x00FF == 0x009E) {
+
+                    //skip following instruction if key with hex in vx is pressed
+
+                } else if (x&0x00FF == 0x00A1) {
+
+                    //opposite of previous
+                }
+            }, 
+            0xF000 => {
+                match (x&0x00FF) {
+                    0x07 => {}, 
+                    0x0A => {}, 
+                    0x15 => {}, 
+                    0x18 => {
+                        //just gonna ignore this
+                        //because i dont wanna get into sounds
+                    }, 
+                    0x1E => {
+                        self.i += self.registers[(x&0x0F00 >> 8) as usize] as u16;
+                    }, 
+                    0x29 => {}, 
+                    0x33 => {
+                        for (i, j) in (0..(vx+1)).enumerate() {
+
+
+
+                        }
+                    }, 
+                    0x55 => {
+
+                        for (i, j) in (0..(vx+1)).enumerate() {
+
+                            self.mem[(self.i + i as u16) as usize] = self.registers[j as usize];
+
+                        }
+                        self.i += vx + 1;
+                    },
+                    0x65 => {
+
+                        for (i, j) in (0..(vx+1)).enumerate() {
+ 
+                            self.registers[j as usize] = self.mem[(self.i + i as u16) as usize];
+
+                        }
+                        self.i += vx + 1;
+
+                    }, 
+                    _ => {panic!("OPcode not found: {}", x);}
+
+                }
+            }, 
             _ => { 
-                panic!(); 
+                //unknown opcode
+                panic!("OPcode not found: {}", x); 
             }
 
         };
         //out of match statement and in general command() method
-        self.stackpoint += 1;
+        self.stackpoint += 2;
 
     }
 
