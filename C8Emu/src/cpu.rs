@@ -1,5 +1,6 @@
 use pixel_canvas::Color;
 use rand::Rng;
+use input;
 
 pub const SPRITES: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -28,12 +29,13 @@ pub struct CPU {
     pub mem: [u8; 3584], 
     pub pc: u16, 
     pub stackpoint: u16,
-    pub draw_plot: [[Color; 64]; 32],
+    pub draw_plot: [u8; 2048],
     pub rows: u16, 
     pub cols: u16, 
     pub registers: [u8; 16], 
     pub i: u16, 
-    pub delay_timer: u8
+    pub delay_timer: u8, 
+    pub keymap: [input::keyboard::Key; 16] /* 16 key input, 0 to F. 2, 4, 6, 8 generally used for directional input */
 
 }
 
@@ -49,6 +51,7 @@ impl CPU {
         let vx: u16 = (x&0x0F00) >> 8;
         let vy: u16 = (x&0x00F0) >> 4;
         let nn: u16 = x&0x00FF;
+        let N: u8 = (x&0x000F) as u8;
         println!("{}", x);
 
         match x & 0xF000 {
@@ -56,19 +59,11 @@ impl CPU {
             0x0000 => {
                 if x == 0x00E0 {
                     //clear screen
-                    for i in 0..self.rows {
-
-                        for j in 0..self.cols {
-
-                            self.draw_plot[i as usize][j as usize] = Color {
-                                r: 0,
-                                g: 0,
-                                b: 0
-                            }
-
-                        }
-
+                    for i in 0..self.draw_plot.len() {
+                        self.draw_plot[i] = 0;
                     }
+
+                    
 
                 } else if x == 0x00EE {
                     //return from subroutine
@@ -174,6 +169,29 @@ impl CPU {
             0xD000 => {
                 //draw sprite @ Vx, Vy with N bytes of sprite data starting at addr in self.i
                 //VF = 01 if any set pixels were changed to unset and 00 if not
+                //what we know: the number of "x" values, its width, will be 8\
+                let mut data = vec![0; N as usize];
+                for d in self.i..(self.i+(N as u16)) {
+                    data[(d-self.i) as usize] = SPRITES[d as usize];
+                }
+                let mut start = self.registers[vx as usize] as u16 + (self.registers[vy as usize] as u16) * (2048 as u16);
+                self.registers[0xF] = 0;
+                //if any set pixels changed to unset, we change this to 1
+                for a in data {
+
+                    //assuming that a is a u8
+                    let bins = [a&0b1, (a&0b10)>>1, (a&0b100)>>2, (a&0b1000)>>3, (a&0b10000)>>4, (a&0b100000)>>5];
+                    println!("binary: {:?} | octal: {}", bins, a);
+                    for g in 0..8 {
+
+                        start += g;
+                        if(self.draw_plot[start as usize] == 1 && bins[g as usize] == 0) {self.registers[0xF] = 1; /*set pix 1 changed to unset pix 0 */ }
+                        self.draw_plot[start as usize] = bins[g as usize];
+
+                    }
+
+                }
+                
                 
             }, 
             0xE000 => {

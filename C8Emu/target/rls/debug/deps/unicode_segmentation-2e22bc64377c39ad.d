@@ -1,0 +1,9 @@
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\unicode_segmentation-2e22bc64377c39ad.rmeta: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\grapheme.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\tables.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\word.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\sentence.rs
+
+c:\Users\aarav_gupta\Chip8Emu\C8Emu\target\rls\debug\deps\unicode_segmentation-2e22bc64377c39ad.d: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\grapheme.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\tables.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\word.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\sentence.rs
+
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\lib.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\grapheme.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\tables.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\word.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\unicode-segmentation-1.6.0\src\sentence.rs:
