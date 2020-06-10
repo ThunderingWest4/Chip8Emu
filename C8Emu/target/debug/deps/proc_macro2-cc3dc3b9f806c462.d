@@ -1,0 +1,11 @@
+C:\Users\aarav_gupta\Chip8Emu\C8Emu\target\debug\deps\proc_macro2-cc3dc3b9f806c462.rmeta: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\parse.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\detection.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\fallback.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\wrapper.rs
+
+C:\Users\aarav_gupta\Chip8Emu\C8Emu\target\debug\deps\libproc_macro2-cc3dc3b9f806c462.rlib: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\parse.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\detection.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\fallback.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\wrapper.rs
+
+C:\Users\aarav_gupta\Chip8Emu\C8Emu\target\debug\deps\proc_macro2-cc3dc3b9f806c462.d: C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\lib.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\parse.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\detection.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\fallback.rs C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\wrapper.rs
+
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\lib.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\parse.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\detection.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\fallback.rs:
+C:\Users\aarav_gupta\.cargo\registry\src\github.com-1ecc6299db9ec823\proc-macro2-1.0.17\src\wrapper.rs:

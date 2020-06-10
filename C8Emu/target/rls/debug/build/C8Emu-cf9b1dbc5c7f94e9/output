@@ -1,0 +1,1 @@
+cargo:rustc-link-search=all=c:\Users\aarav_gupta\Chip8Emu\C8Emu\msvc\lib\64

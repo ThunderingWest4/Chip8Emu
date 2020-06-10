@@ -1,6 +1,7 @@
 use pixel_canvas::Color;
 use rand::Rng;
-use input;
+use sdl2::event::Event;
+use sdl2::keyboard::Keycode;
 
 pub const SPRITES: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -35,14 +36,16 @@ pub struct CPU {
     pub registers: [u8; 16], 
     pub i: u16, 
     pub delay_timer: u8, 
-    pub keymap: [input::keyboard::Key; 16] /* 16 key input, 0 to F. 2, 4, 6, 8 generally used for directional input */
+    pub keymap: [bool; 16],  /* 16 key input, 0 to F. 2, 4, 6, 8 generally used for directional input */
+    pub stack: [u16; 16], 
+    pub wait_for_keypress: bool
+    
 
 }
 
 
 impl CPU {
 
-    fn CPU() {}
     pub fn command(&mut self, x: u16) {
         
         // the >> is a rightshift
@@ -52,7 +55,9 @@ impl CPU {
         let vy: u16 = (x&0x00F0) >> 4;
         let nn: u16 = x&0x00FF;
         let N: u8 = (x&0x000F) as u8;
-        println!("{}", x);
+        //extremely inefficient to keep re-init-ing sdl2
+        let mut keys = vec!([Keycode::X, Keycode::Num1, Keycode::Num2, Keycode::Num3, Keycode::Q, Keycode::W, Keycode::E, Keycode::A, Keycode::S, Keycode::D, Keycode::Z, Keycode::C, Keycode::Num4, Keycode::R, Keycode::F, Keycode::V]);
+        //println!("{}", x);
 
         match x & 0xF000 {
 
@@ -67,7 +72,11 @@ impl CPU {
 
                 } else if x == 0x00EE {
                     //return from subroutine
-                    
+                    self.pc = self.stack[self.stackpoint as usize];
+                    self.stack[self.stackpoint as usize] = 0;
+                    if(self.stackpoint > 0) {
+                        self.stackpoint-=1;
+                    } 
                 }
             }, 
             0x1000 => {
@@ -77,12 +86,16 @@ impl CPU {
             }, 
             0x2000 => {
                 //execute subroutine at x & 0x0FFF
-                self.command(x & 0x0FFF)
+                println!("Entered Subroutine");
+                self.stack[self.stackpoint as usize] = self.pc;
+                self.stackpoint += 1;
+                self.pc = x&0x0FFF;
+                self.command(self.mem[self.pc as usize] as u16);
             }, 
             0x3000 => {
                 if(self.registers[vx as usize] == nn as u8) {
                     //skip following instruction
-                    self.pc += 2;
+                    self.pc += 1;
 
                 }
             }, 
@@ -90,14 +103,14 @@ impl CPU {
                 if(self.registers[vx as usize] != nn as u8) {
                     //skip following sintruction. isn't this redundant to 0x3XNN? 
                     //Might be that if the thing is 0x3 or 0x4 it just skips
-                    self.pc += 2;
+                    self.pc += 1;
 
                 }
             }, 
             0x5000 => {
                 //0x5XY0
                 if(self.registers[vx as usize] == self.registers[vy as usize]) {
-                    self.pc+=2;
+                    self.pc+=1;
                 }
             }, 
             0x6000 => {
@@ -153,7 +166,7 @@ impl CPU {
                 }
             }, 
             0x9000 => {
-                self.pc += if(self.registers[vx as usize] != self.registers[vy as usize]) {2} else {0};
+                self.pc += if(self.registers[vx as usize] != self.registers[vy as usize]) {1} else {0};
             }, 
             0xA000 => {
                 self.i = x&0x0FFF;
@@ -169,7 +182,8 @@ impl CPU {
             0xD000 => {
                 //draw sprite @ Vx, Vy with N bytes of sprite data starting at addr in self.i
                 //VF = 01 if any set pixels were changed to unset and 00 if not
-                //what we know: the number of "x" values, its width, will be 8\
+                //what we know: the number of "x" values, its width, will be 8
+                println!("About to refresh/draw new stuff to display");
                 let mut data = vec![0; N as usize];
                 for d in self.i..(self.i+(N as u16)) {
                     data[(d-self.i) as usize] = SPRITES[d as usize];
@@ -181,12 +195,12 @@ impl CPU {
 
                     //assuming that a is a u8
                     let bins = [a&0b1, (a&0b10)>>1, (a&0b100)>>2, (a&0b1000)>>3, (a&0b10000)>>4, (a&0b100000)>>5];
-                    println!("binary: {:?} | octal: {}", bins, a);
+                    //println!("binary: {:?} | octal: {}", bins, a);
                     for g in 0..8 {
 
                         start += g;
                         if(self.draw_plot[start as usize] == 1 && bins[g as usize] == 0) {self.registers[0xF] = 1; /*set pix 1 changed to unset pix 0 */ }
-                        self.draw_plot[start as usize] = bins[g as usize];
+                        self.draw_plot[start as usize] ^= bins[g as usize];
 
                     }
 
@@ -198,20 +212,33 @@ impl CPU {
                 if(x&0x00FF == 0x009E) {
 
                     //skip following instruction if key with hex in vx is pressed
+                    if(self.keymap[self.registers[vx as usize] as usize]) {
+                        self.pc += 1;
+                    }
 
                 } else if (x&0x00FF == 0x00A1) {
 
                     //opposite of previous
+                    if(!self.keymap[self.registers[vx as usize] as usize]) {
+                        self.pc += 1;
+                    }
                 }
             }, 
             0xF000 => {
                 match (x&0x00FF) {
-                    0x07 => {}, 
-                    0x0A => {}, 
+                    0x07 => {
+                        self.registers[vx as usize] = self.delay_timer;
+                    }, 
+                    0x0A => {
+                        //wait for a keypress
+                        self.wait_for_keypress = true;
+                        
+                    }, 
                     0x15 => {}, 
                     0x18 => {
                         //just gonna ignore this
                         //because i dont wanna get into sounds
+                        //woo
                     }, 
                     0x1E => {
                         self.i += self.registers[(x&0x0F00 >> 8) as usize] as u16;
@@ -254,7 +281,11 @@ impl CPU {
 
         };
         //out of match statement and in general command() method
-        self.stackpoint += 2;
+        if(self.pc < 3583) {
+            self.pc += 1;
+        } else {
+            self.pc = 0;
+        }
 
     }
 

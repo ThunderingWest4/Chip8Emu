@@ -1,0 +1,2 @@
+cargo:include=C:\Users\aarav_gupta\.cargo\git\checkouts\rust-sdl2-f20db51beeece243\755f163\sdl2-sys\SDL2-2.0.10\include
+cargo:rustc-flags=-l SDL2
