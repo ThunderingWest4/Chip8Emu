@@ -4,17 +4,22 @@ use std::io::prelude::*;
 use pixel_canvas::{Canvas, Color};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use std::{time, thread};
 
 fn main() {
 
     println!("Rust Chip-8 Emulator");
-    let col: u16 = 256;
-    let row: u16 = 128;
-    let mult = 4;
+    let mult = 6;
+    let col: u16 = 64*mult;
+    let row: u16 = 32*mult;
     //32x64 * 4 = 128x256
-    let canv = Canvas::new(col as usize, row as usize).title("Thunder-8");
+    //*8 = 512x256
+
+    let half_sec = time::Duration::from_millis(500);
+    let run_rom = "pong.ch8".to_string();
+    let canv = Canvas::new(col as usize, row as usize).title(concat!("Thunder-8: ", "Pong"));
     let sdl_context = sdl2::init().unwrap();
-    let loadedrom = load_rom("pong.rom".to_string());
+    let loadedrom = load_rom(run_rom);
     
     let wht = Color {
         r: 255, 
@@ -29,19 +34,30 @@ fn main() {
 
     }; 
     let keyMap = [false; 16];
-    let mut event_pump = sdl_context.event_pump().unwrap();
-    let mut Cpu = cpu::CPU {mem: loadedrom, pc: 0, stackpoint: 0, draw_plot: [0; 2048], rows: row, cols: col, registers: [0; 16], i: 0, delay_timer: 0, keymap: keyMap, stack: [0; 16], wait_for_keypress: false};
+    
+    let vec_size = (col as u128)*(row as u128);
+    println!("Draw Plot Size: {}", vec_size);
+    let mut Cpu = cpu::CPU {mem: loadedrom, pc: 0, stackpoint: 0, draw_plot: vec![0; vec_size as usize], rows: row, cols: col, registers: [0; 16], i: 0, delay_timer: 0, keymap: keyMap, stack: [0; 16], wait_for_keypress: false};
     println!("About to render canvas");
     let mut keys = vec!([Keycode::X, Keycode::Num1, Keycode::Num2, Keycode::Num3, Keycode::Q, Keycode::W, Keycode::E, Keycode::A, Keycode::S, Keycode::D, Keycode::Z, Keycode::C, Keycode::Num4, Keycode::R, Keycode::F, Keycode::V]);
 
-    canv.render(move |thing, image| {
-
+    canv.render(move |_thing, image| {
+        //for i in Cpu.stack.iter() {
+        //   print!("{}", i);
+        //}
+        let mut event_pump = sdl_context.event_pump().unwrap();
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit {..} |
                 Event::KeyDown { keycode: Some(Keycode::Escape), ..} => { panic!("only way i can think of to get out of canvas.render loop") }, 
-
-                Event::KeyDown {keycode: Some(Keycode::X), ..} => { Cpu.keymap[0x0 as usize] = true; }, 
+                Event::KeyDown {keycode, ..} => {
+                    println!("key pressed");
+                    match keycode {
+                        Some(Keycode::Escape) => panic!("exit game"), 
+                        Some(Keycode::X) => Cpu.keymap[0x0 as usize] = true, 
+                        _ => {}
+                    } 
+                }, 
                 Event::KeyDown {keycode: Some(Keycode::Num1), ..} => { Cpu.keymap[0x1 as usize] = true; }, 
                 Event::KeyDown {keycode: Some(Keycode::Num2), ..} => { Cpu.keymap[0x2 as usize] = true; }, 
                 Event::KeyDown {keycode: Some(Keycode::Num3), ..} => { Cpu.keymap[0x3 as usize] = true; }, 
@@ -86,8 +102,8 @@ fn main() {
 
         let width = image.width() as usize;
 
-        println!("{}", Cpu.pc);
         let prevcmd: u16 = Cpu.mem[Cpu.pc as usize] as u16;
+        println!("{} {}", Cpu.pc, prevcmd);
         Cpu.command(Cpu.mem[Cpu.pc as usize] as u16);
         if(Cpu.wait_for_keypress) {
             println!("Waiting for Keypress");
@@ -125,16 +141,19 @@ fn main() {
             for(x, pix) in row.iter_mut().enumerate() {
 
                 //time to map a 1d array as a 2d one
-                *pix = match Cpu.draw_plot[(x%mult) + width*(y%mult)] {
+                let m = mult as usize;
+                //println!("Drawing Index x: {0}, y: {1}, 1d array: {2}", x, y, ((x%m) + width*(y%m)));
+                *pix = match Cpu.draw_plot[(x%m) + width*(y%m)] {
                     0 => blk,
                     1 => wht,
-                    _ => panic!("you should not be seeing this and the value in question is {}", Cpu.draw_plot[(x%mult) + width*(y%mult)])
+                    _ => panic!("you should not be seeing this and the value in question is {}", Cpu.draw_plot[(x%m) + width*(y%m)])
                 };
 
 
             }
 
         }
+        thread::sleep(half_sec);
 
     });
 
