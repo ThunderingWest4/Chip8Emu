@@ -78,7 +78,7 @@ impl CPU {
                     if self.stackpoint > 0 {
                         self.stackpoint-=1;
                     } 
-                }
+                } 
             }, 
             0x1000 => {
                 //jump to address x & 0x0FFF
@@ -98,7 +98,7 @@ impl CPU {
                 println!("Checking if Skip Intruction");
                 if self.registers[vx as usize] == nn as u8 {
                     //skip following instruction
-                    self.pc += 1;
+                    self.pc += 2;
 
                 }
             }, 
@@ -107,7 +107,7 @@ impl CPU {
                 if self.registers[vx as usize] != nn as u8 {
                     //skip following sintruction. isn't this redundant to 0x3XNN? 
                     //Might be that if the thing is 0x3 or 0x4 it just skips
-                    self.pc += 1;
+                    self.pc += 2;
 
                 }
             }, 
@@ -115,7 +115,7 @@ impl CPU {
                 //0x5XY0
                 println!("Check if Skip 3");
                 if self.registers[vx as usize] == self.registers[vy as usize] {
-                    self.pc+=1;
+                    self.pc+=2;
                 }
             }, 
             0x6000 => {
@@ -175,7 +175,7 @@ impl CPU {
             }, 
             0x9000 => {
                 println!("Check if skip (again) if vx!=vy");
-                self.pc += if self.registers[vx as usize] != self.registers[vy as usize] {1} else {0};
+                self.pc += if self.registers[vx as usize] != self.registers[vy as usize] {2} else {0};
             }, 
             0xA000 => {
                 println!("VI = x&0x0FFF");
@@ -211,7 +211,7 @@ impl CPU {
                     for g in 0..8 {
 
                         start += g;
-                        if self.draw_plot[start as usize] == 1 && bins[g as usize] == 0 {self.registers[0xF] = 1; /*set pix 1 changed to unset pix 0 */ }
+                        if self.draw_plot[start as usize] == 1 && bins[g as usize] == 0 {self.registers[0xF] = 1; /*set pix 1 changed to unset pix 0, draw flag */ }
                         self.draw_plot[start as usize] ^= bins[g as usize];
 
                     }
@@ -226,14 +226,14 @@ impl CPU {
 
                     //skip following instruction if key with hex in vx is pressed
                     if self.keymap[self.registers[vx as usize] as usize] {
-                        self.pc += 1;
+                        self.pc += 2;
                     }
 
                 } else if x&0x00FF == 0x00A1 {
 
                     //opposite of previous
                     if !self.keymap[self.registers[vx as usize] as usize] {
-                        self.pc += 1;
+                        self.pc += 2;
                     }
                 } else {
                     panic!("Unknown OPCode {}", x);
@@ -299,7 +299,7 @@ impl CPU {
         };
         //out of match statement and in general command() method
         if(self.pc < 3583) {
-            self.pc += 1;
+            self.pc += 2;
         } else {
             self.pc = 0;
         }

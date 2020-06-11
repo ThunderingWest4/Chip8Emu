@@ -34,7 +34,7 @@ fn main() {
 
     }; 
     let keyMap = [false; 16];
-    
+     
     let vec_size = (col as u128)*(row as u128);
     println!("Draw Plot Size: {}", vec_size);
     let mut Cpu = cpu::CPU {mem: loadedrom, pc: 0, stackpoint: 0, draw_plot: vec![0; vec_size as usize], rows: row, cols: col, registers: [0; 16], i: 0, delay_timer: 0, keymap: keyMap, stack: [0; 16], wait_for_keypress: false};
@@ -102,9 +102,9 @@ fn main() {
 
         let width = image.width() as usize;
 
-        let prevcmd: u16 = Cpu.mem[Cpu.pc as usize] as u16;
+        let prevcmd: u16 = (((Cpu.mem[Cpu.pc as usize] as u16) << 8) |  Cpu.mem[(Cpu.pc + 1) as usize] as u16) as u16;
         println!("{} {}", Cpu.pc, prevcmd);
-        Cpu.command(Cpu.mem[Cpu.pc as usize] as u16);
+        Cpu.command((((Cpu.mem[Cpu.pc as usize] as u16) << 8) |  Cpu.mem[(Cpu.pc + 1) as usize] as u16) as u16);
         if(Cpu.wait_for_keypress) {
             println!("Waiting for Keypress");
             let mut keypressed: bool = false;
@@ -153,7 +153,7 @@ fn main() {
             }
 
         }
-        thread::sleep(half_sec);
+        //thread::sleep(half_sec);
 
     });
 
